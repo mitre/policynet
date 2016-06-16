@@ -1,0 +1,19 @@
+<md-dialog aria-label="Change Text"  ng-cloak>
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+		<h2>Change Text</h2>
+		<span flex></span>
+		<md-button class="md-icon-button" ng-click="cancel()">
+			<md-icon class="material-icons">clear</md-icon>
+		</md-button>
+		</div>
+	</md-toolbar>
+	<md-dialog-content style="max-width:800px;max-height:810px; ">
+		<div class="md-dialog-content">
+			<ui-highlighter ng-if="text.xml" lang='xml'>
+{{text.xml}}
+			</ui-highlighter>
+			<div ng-if="text.text"><pre class="plain-text">{{text.text}}</pre></div>
+		</div>
+	</md-dialog-content>
+</md-dialog>

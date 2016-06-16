@@ -1,0 +1,144 @@
+<md-content layout="column" data-page="{{page}}">
+	<div>
+		<form flex>
+			<md-toolbar layout="row" class="md-accent" >
+				<div flex></div>
+				<md-input-container flex="40" md-no-float>
+					<label>Topic</label>
+					<input ng-model="query_string">
+				</md-input-container>
+				<div flex></div>
+				<md-button type="submit" class="md-primary md-raised" ng-click="search()">Search</md-button>
+				<md-button ng-show="text && (text.xml || text.redline)" class="md-warn md-fab" ng-click="close_bill_text()">close</md-button>
+			</md-toolbar>
+		</form>
+	</div>
+	<div layout="row" layout-marign layout-padding>
+		<div ng-show="bills_data && !text">
+			<md-data-table-toolbar>
+				<!-- <h2 class="md-title">Nodes</h2> -->
+			</md-data-table-toolbar>
+
+			<md-data-table-container>
+				<table md-data-table>
+					<thead md-order="table_query.order" md-trigger="onChangeOrder">
+						<tr flex>
+							<th name="Actions" flex='10'></th>
+							<th numeric name="Bill ID" order-by="bill_id"></th>
+							<th class="width-40" name="Bill Title" order-by="title"></th>
+							<th name="Text Availability"></th>
+							<th name="Relevance" order-by="score"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr md-auto-select ng-repeat="bill in bills_data.results | orderBy: table_query.order | limitTo: table_query.limit : (table_query.page - 1 ) * table_query.limit">
+							<td>
+								<md-button class="md-icon-button" aria-label="text" ng-if="bill.last_version.urls.xml" ng-click="format_bill_xml($event, bill.bill_id)">
+									<md-icon class="material-icons">descriptions</md-icon>
+								</md-button>
+								<md-button class="md-icon-button" aria-label="text" ng-if="bill.last_version.urls.xml" ng-click="get_bill_text(bill.bill_id, 'redline')">
+									<md-icon class="material-icons">format_color_text</md-icon>
+								</md-button>
+								<span ng-if="!bill.last_version.urls.xml">No action available.</span>
+							</td>
+							<td>{{bill.bill_id}}</td>
+							<td>{{bill.official_title}}</td>
+							<td>
+
+								<md-button ng-repeat="(format, link) in bill.last_version.urls" ng-href="{{link}}" target="_blank">
+									{{format}}
+								</md-button>
+							</td>
+							<td>{{bill.search.score}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-data-table-container>
+
+			<md-data-table-pagination md-limit="table_query.limit" md-page="table_query.page" md-total="{{table_query.total}}" md-row-select="table_query.itemPerPage" md-trigger="onPaginationChange"></md-data-table-pagination>
+		</div>
+		<md-content flex="100" layout="row" layout-wrap ng-show="text && text.xml">
+			<div flex="100">
+				<ui-highlighter ng-if="text.xml" lang='xml'>{{text.xml}}</ui-highlighter>
+				<!-- <pre ng-if="text.xml" class="bill-text">
+					<code ui-highlighter clsas="language-xml">{{text.xml}}</code>
+				</pre> -->
+			</div>
+		</md-content>
+		<div ng-show="text && text.redline">
+			<md-data-table-toolbar>
+				<!-- <h2 class="md-title">Nodes</h2> -->
+			</md-data-table-toolbar>
+
+			<md-data-table-container>
+				<table md-data-table>
+					<thead md-order="table_query.order" md-trigger="onChangeOrder">
+						<tr flex>
+							<th name="Bill Element"></th>
+							<th name="Tag Name"></th>
+							<th name="Citation"></th>
+							<th class="width-40" name="Action"></th>
+							<th name="Change Text"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr md-auto-select ng-repeat="change in text.redline" ng-if="change.change_quote !== false">
+							<td>
+								<md-menu md-position-mode="target-right target">
+									<md-button ng-click="$mdOpenMenu($event)">
+										{{change.num.join(" ")}}
+									</md-button>
+									<md-menu-content width="4">
+										<md-menu-item>
+											<md-button ng-click="show_text(change.sec_xml)">XML
+											</md-button>
+										</md-menu-item>
+										<md-menu-item>
+											<md-button ng-click="show_text(change.sec_text)">Text
+											</md-button>
+										</md-menu-item>
+									</md-menu-content>
+								</md-menu>
+							</td>
+							<td>
+								<span ng-class="{success: change.change_quote, failure: change.change_quote === false}">{{change.tag_name}}</span>
+							</td>
+							<td>
+								<a target="_blank" ng-href="{{change.ref_link}}">{{change.ref || "Woops."}}</a>
+
+								<md-menu ng-if="change.citationExists" md-position-mode="target-right target">
+									<md-button ng-click="$mdOpenMenu($event)">
+										Found in DB
+									</md-button>
+									<md-menu-content width="4">
+										<md-menu-item>
+											<md-button ng-click="get_text(change.ref, 'xml')">XML
+											</md-button>
+										</md-menu-item>
+										<md-menu-item>
+											<md-button ng-click="get_text(change.ref, 'text')">Text
+											</md-button>
+										</md-menu-item>
+									</md-menu-content>
+								</md-menu>
+
+								<span ng-if="!change.citationExists" ng-class="failure">Not Found in DB</span>
+							</td>
+							<td>{{change.action_text}}</td>
+							<td>
+								<md-button class="no-min-width" ng-click="show_text(change.change_xml)">
+									XML
+								</md-button>
+								<md-button class="no-min-width" ng-click="show_text(change.change_text)">
+									Text
+								</md-button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</md-data-table-container>
+
+			<!-- <md-data-table-pagination md-limit="table_query.limit" md-page="table_query.page" md-total="{{table_query.total}}" md-row-select="table_query.itemPerPage" md-trigger="onPaginationChange"></md-data-table-pagination> -->
+		</div>
+	</div>
+</md-content>

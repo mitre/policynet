@@ -1,0 +1,30 @@
+[data-page=intro] cite {
+	font-size: 10px;
+}
+md-grid-list md-grid-tile md-grid-tile-header, md-grid-list md-grid-tile md-grid-tile-footer{
+	height: 60px;
+	background-color: #666666;
+}
+
+.head {
+	font-weight: 300;
+	line-height: 150%;
+}
+
+.text-justified {
+	text-align: justify;
+}
+.svg-container {
+	display: inline-block;
+	position: relative;
+	width: 100%;
+	padding-bottom: 46.5%;
+	vertical-align: middle;
+	overflow: hidden;
+}
+.svg-content {
+	display: inline-block;
+	position: absolute;
+	top: 0;
+	left: 0;
+}

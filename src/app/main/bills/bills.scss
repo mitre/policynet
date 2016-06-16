@@ -1,0 +1,29 @@
+table > thead > tr > th.width-50 {
+	width: 50%;
+}
+table > thead > tr > th.width-40 {
+	width: 40%;
+}
+
+/* Browser specific (not valid) styles to make preformatted text wrap */
+
+pre {
+	white-space: pre-wrap;       /* css-3 */
+	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+	white-space: -pre-wrap;      /* Opera 4-6 */
+	white-space: -o-pre-wrap;    /* Opera 7 */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+pre.plain-text {
+	font-size: 150%;
+}
+button.no-min-width {
+	min-width: 0px;
+}
+span.success {
+	color: #51a351;
+}
+span.failure {
+	color: #bd362f;
+}

@@ -1,0 +1,13 @@
+<md-toolbar>
+<div layout="row" layout-align="start center">
+	<md-button class="md-fab" ng-click="toggleMenu()">
+		<md-icon class="material-icons">menu</md-icon>
+	</md-button>
+	<h1 class="ui-navbar-text">{{vm.stateName}}<small ng-if="vm.subheading"> - {{vm.subheading}}</small></h1>
+</div>
+<!-- <div flex="10" layout="row" layout-align="end center">
+	<md-button class="md-fab">
+		<md-icon class="material-icons">group</md-icon>
+	</md-button>
+</div> -->
+</md-toolbar>

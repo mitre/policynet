@@ -1,0 +1,5 @@
+beautifulsoup4==4.4.1
+psycopg2==2.6.1
+python-dateutil==2.5.3
+six==1.10.0
+Unidecode==0.4.19

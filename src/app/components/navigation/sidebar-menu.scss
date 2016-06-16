@@ -1,0 +1,23 @@
+[ui-sidebar], [ui-sidebar] h1, [ui-sidebar] md-content, [ui-sidebar] md-content .md-subheader {
+	background-color: rgb(96,125,139);
+}
+img.logo{
+	background-color: rgb(96,125,139);
+}
+md-sidenav md-list-item > a {
+	font-size: 15px;
+	text-decoration: none;
+	padding-left: 15px;
+	color: white;
+}
+[ui-sidebar] md-content .md-subheader span.md-subheader-content > span {
+	color: #bbbbbb;
+}
+md-sidenav.md-locked-open {
+	width: 250px;
+	min-width: 250px;
+	max-width: 250px;
+}
+md-sidenav md-list-item.highlight {
+	background-color: rgba(0,0,0,0.2);
+}

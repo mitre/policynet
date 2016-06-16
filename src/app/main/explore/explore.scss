@@ -1,0 +1,29 @@
+.wrapper{
+	display: inline-block;
+	position: relative;
+	overflow:visible;
+	width: 100%;
+}
+.graphContainer {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+.paragraph {
+	line-height: 200%;
+	font-weight: 400;
+	font-family: 'Roboto', sans-serif;
+}
+md-sidenav.md-sidenav-right {
+    min-width: 200px;
+    width: 30vw;
+    max-width: 500px;
+}
+md-toolbar .md-menu {
+	padding: 0;
+}
+.contextual-menu-wrapper {
+	position: absolute;
+}

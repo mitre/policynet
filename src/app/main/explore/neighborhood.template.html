@@ -1,0 +1,181 @@
+<md-content layout="column" flex data-page="{{page}}">
+	<div>
+		<form flex>
+			<md-toolbar layout="row" class="md-accent" >
+				<md-autocomplete flex=""
+					md-floating-label="Law section name"
+					md-item-text="item.display"
+					md-items="item in getSuggestions(network_query.searchText)"
+					md-search-text="network_query.searchText"
+					md-selected-item="network_query.selectedItem"
+					required="">
+					<md-item-template>
+						<span md-highlight-text="network_query.searchText">{{item.display}}</span>
+					</md-item-template>
+				</md-autocomplete>
+
+				<div layout flex="20" ng-if="network_query.hop!==undefined">
+					<div flex="20" layout layout-align="center center">
+						<span class="md-body-1">Hop: </span>
+					</div>
+					<md-slider flex md-discrete min="1" max="10" step="1" ng-model="network_query.hop" aria-label="hop" class="md-warn"></md-slider>
+				</div>
+				<span flex></span>
+				<md-menu md-position-mode="target-right target">
+					<md-button type="submit" aria-label="Download menu" class="md-icon-button md-fab md-primary" ng-show="network_query.selectedItem.value" ng-click="$mdOpenMenu($event)">
+						<md-icon class="material-icons">share</md-icon>
+					</md-button>
+					<md-menu-content width="4">
+						<md-menu-item>
+							<md-button ng-click="getData()">
+								Get neighborhood graph
+							</md-button>
+						</md-menu-item>
+					</md-menu-content>
+				</md-menu>
+				<md-menu md-position-mode="target-right target" ng-show="graph[mainView].data">
+					<md-button aria-label="Download menu" class="md-icon-button md-fab md-primary md-hue-1" ng-click="$mdOpenMenu($event)">
+						<md-icon class="material-icons">file_download</md-icon>
+					</md-button>
+					<md-menu-content width="4">
+						<md-menu-item>
+							<md-button ng-click="downloadGraphData()" ng-href="{{graph_data}}" download="data.json">
+								<md-icon class="material-icons">file_download</md-icon>
+								Download network data (JSON)
+							</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button ng-click="downloadTableData()" ng-href="{{table_data}}" download="data.csv">
+								<md-icon class="material-icons">list</md-icon>
+								Download table data (CSV)
+							</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button ng-click="downloadGraph()" ng-href="{{canvas_href}}" download="image.png">
+								<md-icon class="material-icons">image</md-icon>
+								Download network image (PNG)
+							</md-button>
+						</md-menu-item>
+					</md-menu-content>
+				</md-menu>
+				<md-button class="md-icon-button md-fab md-warn" ng-click="clearGraph()" ng-show="graph[mainView].data">
+					<md-icon class="material-icons">clear</md-icon>
+				</md-button>
+			</md-toolbar>
+		</form>
+	</div>
+
+	<div layout="row" layout-margin layout-padding>
+		<div flex = "70">
+			<div layout="column">
+				<md-toolbar md-theme="inline-toolbar">
+					<div class="md-toolbar-tools" layout-padding>
+						<span flex></span>
+						<md-button ng-show="graph.global.data !== null" ng-click="changeView('global')" ng-class="{'md-primary md-hue-1': mainView != 'global', 'md-raised md-accent': mainView == 'global'}">Graph</md-button>
+						<md-button ng-show="graph.global.data !== null" ng-click="changeView('table')" ng-class="{'md-primary md-hue-1': mainView != 'table', 'md-raised md-accent': mainView == 'table'}">Table</md-button>
+						<span flex></span>
+					</div>
+				</md-toolbar>
+				<div ng-show="mainView == 'global'">
+					<div>
+						<div ng-show="graph.global.data === null" layout="row">
+							<p class="paragraph" flex="80" flex-offset="10">{{description}}</p>
+						</div>
+						<p class="paragraph" flex="80" flex-offset="10" ng-if="graph.global.pie_members[0]"><i>Other nodes</i> include: {{graph.global.pie_members[0].join(", ")}}</p>
+						<p class="paragraph" flex="80" flex-offset="10" ng-if="graph.global.pie_members[1]"><i>Other citations</i> include: "{{graph.global.pie_members[1].join("\", \"")}}"</p>
+						<div class="wrapper">
+							<div id="{{graph.global.container}}" class="graphContainer"></div>
+						</div>
+					</div>
+				</div>
+				<div ng-show="mainView == 'table'">
+					<md-content>
+						<div ng-show="graph.global.data === null" layout="row">
+							<p class="paragraph" flex="80" flex-offset="10">{{description}}</p>
+						</div>
+						<div ng-show="graph.global.data !== null">
+							<md-data-table-toolbar>
+								<!-- <h2 class="md-title">Nodes</h2> -->
+							</md-data-table-toolbar>
+
+							<md-data-table-container>
+								<table md-data-table>
+									<thead md-order="table_query.order" md-trigger="onChangeOrder">
+										<tr>
+											<th name="Text"></th>
+											<th numeric name="Node ID" order-by="id_num"></th>
+											<th name="Text" order-by="l1"></th>
+											<th name="Title" order-by="l2"></th>
+											<th name="Section" order-by="l3"></th>
+											<th name="Node Name" order-by="name"></th>
+											<th name="Degree" order-by="edges.length"></th>
+											<th name="Matched?" order-by="matchQuery"></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr md-auto-select ng-repeat="node in graph.global.data.nodes_combined | orderBy: table_query.order | limitTo: table_query.limit : (table_query.page - 1 ) * table_query.limit">
+											<td>
+												<md-button class="md-icon-button" aria-label="text" ng-click="getNodeInformation(node)">
+													<md-icon class="material-icons">description</md-icon>
+												</md-button>
+											</td>
+											<td>{{node.id}}</td>
+											<td>{{node.l1}}</td>
+											<td>{{node.l2}}</td>
+											<td>{{node.l3}}</td>
+											<td>{{node.name}}</td>
+											<td>{{node.edges.length}}</td>
+											<td>{{node.matchQuery ? "Matched" : "Linked"}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</md-data-table-container>
+
+							<md-data-table-pagination md-limit="table_query.limit" md-page="table_query.page" md-total="{{graph.global.data.nodes_combined.length}}" md-row-select="table_query.itemPerPage"></md-data-table-pagination>
+						</div>
+					</md-content>
+				</div>
+			</div>
+		</div>
+		<div flex>
+			<div layout="column">
+				<md-toolbar md-theme="inline-toolbar">
+					<div class="md-toolbar-tools" layout-padding>
+						<span flex></span>
+						<md-button ng-show="graph[mainView].data && !!graph[mainView].pie && graph[mainView].pie.length" ng-click="sideView = 'pie'" ng-class="{'md-primary md-hue-1': sideView != 'pie', 'md-raised md-accent': sideView == 'pie'}" >Pie</md-button>
+						<md-button ng-show="graph[mainView].data && graph[mainView].data.java" ng-show="statistics" ng-click="sideView = 'stat'" ng-class="{'md-primary md-hue-1': sideView != 'stat', 'md-raised md-accent': sideView == 'stat'}">Statistics</md-button>
+						<span flex></span>
+					</div>
+				</md-toolbar>
+				<div ng-show="sideView == 'pie' && graph[mainView].pie != undefined">
+					<div>
+						<div id="{{graph[mainView].pieTitle}}"></div>
+						<md-switch ng-model="graph[mainView].pieShow[0]" ng-true-value="'Matched & Linked'" ng-false-value="'Matched Only'" ng-show="graph[mainView].pie[0]" ng-change="pieToggle(0,graph[mainView].pieShow[0])">Showing: {{graph[mainView].pieShow[0]}}</md-switch>
+						<div id="{{graph[mainView].pieCitation}}"></div>
+						<md-switch ng-model="graph[mainView].pieShow[1]" ng-true-value="'Experimental'" ng-false-value="'HLT'" ng-show="graph[mainView].pie[1]" ng-change="pieToggle(1,graph[mainView].pieShow[1])">Showing: {{graph[mainView].pieShow[1]}}</md-switch>
+					</div>
+				</div>
+				<div ng-show="sideView == 'stat' && graph[mainView].data">
+					<md-content>
+						<p ng-repeat="(key, value) in graph[mainView].statistics" class="paragraph"><bold>{{key}}</bold>: {{value}}</p>
+					</md-content>
+				</div>
+			</div>
+		</div>
+	</div>
+	<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
+		<md-toolbar class="md-theme-light">
+			<h3 class="md-toolbar-tools">{{graph[mainView].node.name}}</h3>
+		</md-toolbar>
+		<md-content layout-padding ng-if="graph[mainView].edge" ng-repeat="edge in graph[mainView].edge">
+			<h3>Edge {{$index+1}}: {{edge.type}} (to {{edge.to}})</h3>
+			<p class="paragraph">{{edge.context}}</p>
+			<md-divider md-inset ng-if="!$last"></md-divider>
+			<md-divider ng-if="$last"></md-divider>
+		</md-content>
+		<md-content layout-padding>
+			<h3>{{graph[mainView].node.heading}}</h3>
+			<p class="paragraph">{{graph[mainView].node.text}}</p>
+		</md-content>
+	</md-sidenav>
+</md-content>

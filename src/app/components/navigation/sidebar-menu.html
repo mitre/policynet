@@ -1,0 +1,17 @@
+<md-sidenav class="md-sidenav-left" md-is-locked-open="vm.menu_open" md-component-id="left">
+<!-- <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-is-locked-open="$mdMedia('gt-md')" md-component-id="left"> -->
+  <md-toolbar class="logo-container md-theme-indigo">
+    <img src="assets/img/logo.png" class="img-responsive logo">
+  </md-toolbar>
+  <md-content layout-padding>
+    <md-button ng-click="close()" class="md-primary" hide-gt-md>
+      Close Sidenav Left
+    </md-button>
+    <md-list ng-repeat="section in vm.sections">
+			<md-subheader class="md-no-sticky">{{section.name}}</md-subheader>
+			<md-list-item ng-repeat="page in section.pages" ng-class="{highlight: (vm.state.current.url === page.url)}">
+				<a ng-href="{{page.url}}">{{ page.name }}</a>
+			</md-list-item>
+		</md-list>
+  </md-content>
+</md-sidenav>

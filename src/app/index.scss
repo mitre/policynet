@@ -1,0 +1,135 @@
+/**
+ *  Do not remove this comments bellow. It's the markers used by wiredep to inject
+ *  sass dependencies when defined in the bower.json of your dependencies
+ */
+// bower:scss
+// endbower
+
+html {
+	font-family: 'Roboto', sans-serif;
+	font-weight: 300;
+}
+
+[layout=row] {
+	flex-direction: row;
+}
+
+.browsehappy {
+	margin: 0.2em 0;
+	background: #ccc;
+	color: #000;
+	padding: 0.2em 0;
+}
+
+.thumbnail {
+	height: 200px;
+
+	img.pull-right {
+		width: 50px;
+	}
+}
+
+// md-toolbar.md-default-theme {
+//   background-color: black;
+// }
+
+section.jumbotron {
+	margin-bottom: 30px;
+	padding: 1px 30px;
+	background-color: #5aadbb;
+	text-align: center;
+
+	color: white;
+
+	h1 {
+		font-size: 3em;
+	}
+}
+
+.techs {
+	display: flex;
+	flex-flow: row wrap;
+
+	md-card {
+		width: 30%;
+
+		img.pull-right {
+			float: right;
+			width: 50px;
+		}
+	}
+}
+
+.img-responsive {
+	display: block;
+	height: auto;
+	max-width: 100%;
+}
+.fullpageoverlay {
+	width: 100%;
+	height: 100%;
+	z-index: 1000;
+	margin: 0px;
+	position: fixed;
+	background-color: white;
+	opacity: .7;
+}
+div.loading {
+	z-index:2000;
+	position:fixed;
+	top:50%;
+	left:50%;
+}
+h1, h2, h3, h4 {
+	font-weight: 300;
+}
+h1>small, h2>small, h3>small, h4>small, h1>.small, h2>.small, h3>.small, h4>.small {
+	font-size: 60%;
+}
+// potentially non-kosher temporary fix to visual oddities in material angular 1.0.0-rc2. may break in the future.
+md-autocomplete[md-floating-label] md-input-container {
+	padding-bottom: 2px;
+}
+form > md-toolbar {
+	md-input-container, md-autocomplete{
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+	md-datepicker{
+		padding-top: 11px;
+	}
+}
+.md-default-theme .md-datepicker-input-mask-opaque,
+.md-datepicker-input-mask-opaque,
+md-datepicker.md-default-theme,
+md-datepicker{
+	background-color: rgb(105,240,174);
+}
+md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.md-menu-toolbar){
+	 .md-button, md-icon{
+	 	color: rgba(0,0,0,0.87);
+	 }
+}
+.md-default-theme .md-datepicker-input-container, .md-datepicker-input-container {
+	border-bottom-color: rgba(0,0,0,0.12);
+}
+md-toolbar > button.md-icon-button.md-button{
+	margin-top: auto;
+	margin-bottom: auto;
+}
+md-toolbar md-slider{
+	margin-top: auto;
+	margin-bottom: auto;
+}
+
+// IE related CSS fix
+md-sidenav > md-toolbar.logo-container{
+	display: inline;
+}
+
+/**
+ *  Do not remove this comments bellow. It's the markers used by gulp-inject to inject
+ *  all your sass files automatically
+ */
+// injector
+// endinjector
