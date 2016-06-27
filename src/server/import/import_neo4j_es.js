@@ -20,8 +20,7 @@ var batch_es = 1000, // number of documents per batch to be imported in bulk
 	promises = [];
 
 function neo2es(){
-	return new promise(function(resolve, reject){
-		client.indices.delete({
+	return client.indices.delete({
 			index: "_all"
 		}).then(function(){
 			return client.indices.create({
@@ -98,29 +97,31 @@ function neo2es(){
 						}
 					}
 				}
-			})
+			});
 		}).then(function(){
 			console.log("created index")
-			db.cypher({
-				query: "MATCH (n) RETURN COUNT(n) AS count",
-				params: {}
-			}, function(err, results){
-				var count = results[0].count
-				console.log("got nodes:", count);
-				var promises = [];
+			return new promise(function(resolve, reject){
+				db.cypher({
+					query: "MATCH (n) RETURN COUNT(n) AS count",
+					params: {}
+				}, function(err, results){
+					var count = results[0].count
+					console.log("got nodes:", count);
+					var promises = [];
 
-				promise.map(Array(Math.ceil(count / batch_neo4j)), function(n, batch){
-					var start = batch * batch_neo4j;
-					return getNodesFromNeo4j(start, batch_neo4j)
-					.then(insertToES);
-				}, {concurrency: 2})
-				.then(function(){
-					client.close();
-					resolve();
+					promise.map(Array(Math.ceil(count / batch_neo4j)), function(n, batch){
+						var start = batch * batch_neo4j;
+						return getNodesFromNeo4j(start, batch_neo4j)
+						.then(insertToES);
+					}, {concurrency: 2})
+					.then(function(){
+						console.log("import into elasticsearch completed")
+						client.close();
+						resolve();
+					});
 				});
 			});
 		});
-	});
 }
 
 function getNodesFromNeo4j(start, batch){
@@ -169,7 +170,6 @@ function insertToES(results){
 			body: bulk_request
 		}));
 		return promise.all(promises).then(function(){
-			console.log("inserted", results.length, "nodes to Elastic");
 		});
 	}, {concurrency: 1})
 }
