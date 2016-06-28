@@ -31,6 +31,17 @@
 				pieCitation			: $scope.page + "PieCitationContainer",
 				pieShow				: ['Matched & Linked', 'Experimental'],
 				statistics			: {}
+			},
+			local: {
+				data  				: null,
+				obj   				: {},
+				pie   				: [],
+				pie_members			: [],
+				container			: $scope.page + "Container_local",
+				pieTitle			: $scope.page + "PieTitleContainer",
+				pieCitation			: $scope.page + "PieCitationContainer",
+				pieShow				: ['Matched & Linked', 'Experimental'],
+				statistics			: {}
 			}
 
 		};
@@ -61,7 +72,7 @@
 			start = new Date().getTime();
 			query.get('neighborhood', {
 				node: node.id,
-				hop: $scope.hop
+				hop: 1
 			}, true).then(function(data){
 				graph.draw($scope, true, true, true, data);
 				end = new Date().getTime();
