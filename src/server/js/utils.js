@@ -6,10 +6,11 @@ var pd 				= require('pretty-data').pd,
 	promise			= require("promise"),
 	spawn			= require('child_process').spawn,
 	net 			= require('net'),
+	path			= require('path'),
 	config 			= require('./config.js');
 
 var java_layout = function(input_json){
-	return childSpawn(config.java_home + "bin/java",
+	return childSpawn(path.join(config.java_home,"bin/java"),
 		['-classpath', '../java/policynet-layout.jar', 'org.mitre.policynet.policynet_layout.Layout'],
 		function(client){
 			client.write(JSON.stringify(input_json));
