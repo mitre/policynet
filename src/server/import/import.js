@@ -9,6 +9,11 @@ var spawn 				= require('child_process').spawn,
 var pg_username = process.argv[2];
 var pg_password = process.argv[3];
 var pg_database = process.argv[4];
+var alt			= process.argv[5];
+
+if (alt === 'alt'){
+	import_pg_neo4j = require('./import_pg_neo4j_alt.js');
+}
 
 promise.resolve()
 .then(function(){

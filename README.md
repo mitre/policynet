@@ -24,6 +24,10 @@ $ cp src/server/js/config.example.js src/server/js/config.js
 ```bash
 $ node src/server/import/import.js pg_user pg_pass pg_database
 ```
+An alternative import mechanism (for PostgreSQL -> Neo4J stage) is provided, which our tests have shown to be more performant on OS X (but less performant on CentOS).
+```bash
+$ node src/server/import/import.js pg_user pg_pass pg_database alt
+```
 
 ## Usage
 

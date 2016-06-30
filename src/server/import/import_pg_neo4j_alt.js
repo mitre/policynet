@@ -1,4 +1,4 @@
-var neo4j = require('neo4j'),
+var neo4j = require('neo4j-driver'),
 	pg = require('pg'),
 	_ = require('lodash'),
 	promise = require('bluebird');
@@ -13,8 +13,8 @@ function pg2neo(pg_user, pg_pass, pg_host, pg_db){
 
 	console.log(pg_conn);
 	var pg_client = new pg.Client(pg_conn);
-	var neo4j_conn = new neo4j.GraphDatabase(config.neo4j_url);
-
+	var driver = neo4j.v1.driver('bolt://localhost');
+	var neo4j_conn = driver.session();
 
 	var initiation_cypher = [
 	"MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r",
@@ -23,14 +23,14 @@ function pg2neo(pg_user, pg_pass, pg_host, pg_db){
 	]
 
 	var tx_size = 10000;
-	var tx = neo4j_conn.beginTransaction();
+	var tx;
 
 	var node_query = "MERGE (d:Law {name: {name}, heading: {heading}, text: {text}, url: {url}, type: {type}, l1: {l1}, l2: {l2}, l3: {l3}, l4: {l4}})";
 	var edge_query = "MATCH (n:Law {url: {source_url}}), (m:Law {url: {target_url_broad}}) CREATE (n)-[:References {targetURLbroad: {target_url_broad}, context: {context}}]->(m)";
-	var time = new Date().getTime();
-	return promise.all([pg_connect(pg_client)].concat(initiation_cypher.map(function(i){return neo4j_cypher(neo4j_conn, i);})))
-	.then(function(result){
 
+	return promise.all([pg_connect(pg_client)].concat(initiation_cypher.map(function(i){return neo4j_conn.run(i);})))
+	.then(function(result){
+		tx = neo4j_conn.beginTransaction();
 		return new promise(function(resolve, reject){
 			pg_query(pg_client, "SELECT COUNT(*) AS count FROM nodes")
 			.then(function(count){
@@ -55,16 +55,7 @@ function pg2neo(pg_user, pg_pass, pg_host, pg_db){
 								}
 							});
 							done ++;
-							return new promise(function(resolve, reject){
-								tx.cypher({query: node_query, params: n}, function(err){
-									if (err){
-										console.error(err);
-										console.error(err.message);
-										reject(err);
-									}
-									resolve();
-								});
-							});
+							return tx.run(node_query, n);
 						}, {concurrency: 1})
 						.then(function(){
 							process.stdout.clearLine();
@@ -72,18 +63,10 @@ function pg2neo(pg_user, pg_pass, pg_host, pg_db){
 							console.timeEnd("node batch # " + batch);
 							console.time("commit node batch # " + batch);
 							console.log("progress: " + (done / count * 100).toFixed(2) + "%")
-							return new promise(function(resolve, reject){
-								tx.commit(function(err){
-									if (err){
-										console.error(err);
-										console.error(err.message);
-										reject(err);
-									}
-									console.log("nodes " + done + " done");
-									console.timeEnd("commit node batch # " + batch);
-									tx = neo4j_conn.beginTransaction();
-									resolve();
-								});
+							return tx.commit().then(function(){
+								console.log("nodes " + done + " done");
+								console.timeEnd("commit node batch # " + batch);
+								tx = neo4j_conn.beginTransaction();
 							});
 						});
 					});
@@ -114,35 +97,18 @@ function pg2neo(pg_user, pg_pass, pg_host, pg_db){
 								}
 							});
 							done ++;
-							return new promise(function(resolve, reject){
-								tx.cypher({query: edge_query, params: e}, function(err){
-									if (err){
-										console.error(err);
-										console.error(err.message);
-										reject(err);
-									}
-									resolve();
-								});
-							});
+							return tx.run(edge_query, e);
 						}, {concurrency: 1})
 						.then(function(){
 							process.stdout.clearLine();
 							process.stdout.cursorTo(0);
 							console.timeEnd("edge batch # " + batch);
 							console.time("commit edge batch # " + batch);
-							console.log("progress: " + (done / count * 100).toFixed(2) + "%");
-							return new promise(function(resolve, reject){
-								tx.commit(function(err){
-									if (err){
-										console.error(err);
-										console.error(err.message);
-										reject(err);
-									}
-									console.log("edges " + done + " done");
-									console.timeEnd("commit edge batch # " + batch);
-									tx = neo4j_conn.beginTransaction();
-									resolve();
-								});
+							console.log("progress: " + (done / count * 100).toFixed(2) + "%")
+							return tx.commit().then(function(){
+								console.log("edges " + done + " done");
+								console.timeEnd("commit edge batch # " + batch);
+								tx = neo4j_conn.beginTransaction();
 							});
 						});
 					});
@@ -150,16 +116,7 @@ function pg2neo(pg_user, pg_pass, pg_host, pg_db){
 			})
 
 			.then(function(){
-				return new promise(function(resolve, reject){
-					tx.commit(function(err){
-						if (err){
-							console.error(err);
-							console.error(err.message);
-							reject(err);
-						}
-						resolve();
-					});
-				});
+				return tx.commit();
 			})
 			.then(function(){
 				pg_client.end();
