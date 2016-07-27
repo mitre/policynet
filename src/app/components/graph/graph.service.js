@@ -549,13 +549,11 @@
 
 
 		function downloadGraph(scope, context){
-			context = context || scope.mainContext;
-			scope.canvas_href = $("#" + scope.graph[context].container + " .sigma-scene")[0].toDataURL('image/png').replace(/^data:image\/[^;]*/,'data:application/octet-stream');
+			scope.canvas_href = $("#" + scope.graph[context || scope.mainContext].container + " .sigma-scene")[0].toDataURL('image/png').replace(/^data:image\/[^;]*/,'data:application/octet-stream');
 		}
 
 		function downloadGraphData(scope, context){
-			context = context || scope.mainContext;
-			var output = _.clone(scope.graph[context].data);
+			var output = _.clone(scope.graph[context || scope.mainContext].data);
 			output.nodes = output.nodes_combined;
 			output = _.omit(output, ['singletons', 'java', 'nodes_combined']);
 			var outputString = 'data:text/json;charset=utf8,' + encodeURIComponent(JSON.stringify(output));
@@ -567,10 +565,9 @@
 		}
 
 		function downloadTableData(scope, context){
-			context = context || scope.mainContext;
 			var output = '"Node ID","Text","Title","Section","Node Name","Degree","Matched"\n';
-			scope.graph[context].data.nodes_combined.forEach(function(n){
-				output += sprintf('%s,"%s",%s,%s,"%s",%s,"%s"\n',n.id,n.l1,n.l2,n.l3 ? n.l3 : "",n.name.replace(/"/g,'""'),n.edges.length,n.matchQuery? "Matched" : "Linked");
+			scope.graph[context || scope.mainContext].data.nodes_combined.forEach(function(n){
+				output += sprintf('%s,"%s",%s,%s,"%s",%s,"%s"\n',n.id,n.l1,n.l2,n.l3 ? n.l3 : "",n.name.replace(/"/g,'""'),n.edges ? n.edges.length : "",n.matchQuery? "Matched" : "Linked");
 			});
 			var outputString = 'data:text/json;charset=utf8,' + encodeURIComponent(output);
 			if (outputString.length < 2000000) {
