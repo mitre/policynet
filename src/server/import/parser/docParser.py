@@ -134,9 +134,9 @@ class parser():
                 
                     data = {}
         
-                    if unidecode(section.find(secNumTag).text):
-                    
-                        data["srcUrl"] = "/us/{}/{}/{}".format(srcDocType, ''.join([x for x in unidecode(soup.find(docNumTag).text.strip("§")).split(" ") if x[0].isdigit()]), ' '.join([x for x in unidecode(section.find(secNumTag).text.strip().replace(" to ", "_to_")).replace(", ", "_to_").strip(".").replace("  ", " ").split(" ") if x[0].isdigit()]).strip(" "))
+                    if unidecode(section.find(secNumTag).text) and unidecode(section.find(secNumTag).text).strip() != "":
+                        #data["srcUrl"] = "/us/{}/{}/{}".format(srcDocType, ''.join([x for x in unidecode(soup.find(docNumTag).text.strip("§")).split(" ") if x[0].isdigit()]), ' '.join([x for x in unidecode(section.find(secNumTag).text.strip().replace(" to ", "_to_")).replace(", ", "_to_").strip(".").replace("  ", " ").split(" ") if x[0].isdigit()]).strip(" "))
+                        data["srcUrl"] = "/us/{}/{}/{}".format(srcDocType, ''.join([x for x in unidecode(soup.find(docNumTag).text.strip("§").strip()).split(" ") if x[0].strip().isdigit()]), ' '.join([x for x in unidecode(section.find(secNumTag).text.strip().replace(" to ", "_to_")).replace(", ", "_to_").strip(".").replace("  ", " ").split(" ") if x[0].strip().isdigit()]).strip(" "))
             
                         try:
                             sec = section.find(secNumTag)
