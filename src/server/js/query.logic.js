@@ -78,7 +78,7 @@ logic.network_neo4j = function(req, res){
 
 logic.network_es = function(req, res, singletons){
 	var params = req.query;
-	params.query = params.query === " " ? "" : params.query.toLowerCase();
+	params.query = (params.query === undefined || params.query === " ") ? "" : params.query.toLowerCase();
 
 	var es_query = _.cloneDeep(query_utils.es_base_query);
 	es_query.size = params.limit;
@@ -326,7 +326,7 @@ logic.visit = function(req, res){
 
 logic.table_stats = function(req, res){
 	var params = req.query;
-	params.query = params.query === " " ? "" : params.query.toLowerCase();
+	params.query = (params.query === undefined || params.query === " ") ? "" : params.query.toLowerCase();
 	var matched_nodes_limit = 50;
 	var es_query = _.cloneDeep(query_utils.es_base_query);
 	es_query.size = 10000;
@@ -410,7 +410,7 @@ logic.bill_search = function(req, res){
 		url: config.sunlightapi.url + config.sunlightapi.bill_search,
 		method: 'get',
 		query: {
-			query: req.query.query,
+			query: req.query.query.replace(/[^\w\s]/gi, ' '),
 			fields: "bill_type,bill_id,last_version.urls,number,congress,short_title,official_title",
 			per_page: req.query.limit,
 			page: req.query.page,

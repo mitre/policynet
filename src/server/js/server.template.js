@@ -4,7 +4,7 @@ var express 		= require("express"),
 	bodyParser 		= require("body-parser"),
 	path			= require("path"),
 	events			= require("events"),
-
+	helmet			= require("helmet"),
 	app 			= express(),
 	server			= http.createServer(app),
 	io				= socket(server),
@@ -20,7 +20,7 @@ var port = process.env.PORT || 5000; // set our port
 app.use(bodyParser.json()); // parse application/json
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 app.use(bodyParser.urlencoded({ extended: true })); // parse application/x-www-form-urlencoded
-
+app.use(helmet());
 //----- Socket Processor ------------------------------------------------------
 // io.on('connection', function(client){
 // 	emitter.on('message', function(message){
@@ -36,13 +36,13 @@ var api = express.Router();
 
 //----- ### API Configuration -------------------------------------------------
 api.use(function(req, res, next) {
-	res.setHeader('Access-Control-Allow-Origin', '*');
-	res.setHeader('Access-Control-Allow-Headers', '*');
+	// res.setHeader('Access-Control-Allow-Origin', '*');
+	// res.setHeader('Access-Control-Allow-Headers', '*');
 	next();
 });
 
 api.get('/', function(req, res) {
-	// res.json({ message: 'hooray! welcome to our api!' });
+	res.json({ message: 'hooray! welcome to our api!' });
 });
 api.get('/sections', logic.request("sections"));
 api.get('/neighborhood', logic.request("network_neighborhood"));
@@ -61,6 +61,13 @@ api.get('/get_text', logic.request("get_text"));
 app.use('/api', api);
 
 //----- end API Router --------------------------------------------------------
+//----- ### Error handler -----------------------------------------------------
+app.use(function(err, req, res, next){
+	utils.error(err.message);
+	utils.error(err.stack);
+	res.status(500).send("Internal Server Error.");
+})
+//----- end Error handler -----------------------------------------------------
 
 //----- load static pages -----------------------------------------------------
 //----- ### static paths: Do not delete the following line --------------------
