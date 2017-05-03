@@ -1,4 +1,4 @@
-var neo4j = require('neo4j-driver'),
+var neo4j = require('neo4j-driver').v1,
 	pg = require('pg'),
 	_ = require('lodash'),
 	promise = require('bluebird');
@@ -13,7 +13,8 @@ function pg2neo(pg_user, pg_pass, pg_host, pg_db){
 
 	console.log(pg_conn);
 	var pg_client = new pg.Client(pg_conn);
-	var driver = neo4j.v1.driver('bolt://localhost');
+	const auth = neo4j.auth.basic('username', 'password');
+	var driver = neo4j.driver('bolt://localhost', auth);
 	var neo4j_conn = driver.session();
 
 	var initiation_cypher = [

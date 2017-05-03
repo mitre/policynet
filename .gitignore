@@ -1,0 +1,7 @@
+/bower_components/
+/node_modules/
+.tmp/
+/dist/
+/src/server/import/parser/
+/src/server/import/policy-ve/
+/src/server/java/policynet-layout/target/
