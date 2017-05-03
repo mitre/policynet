@@ -4,7 +4,7 @@ var neo4j = require('neo4j'),
 	fs = require("fs");
 
 var config = {
-	neo4j_url	: 'http://localhost:7474',
+	neo4j_url	: 'http://username:password@localhost:7474',
 	elastic_host: 'localhost:9200'
 };
 
@@ -13,7 +13,7 @@ var client = new elasticsearch.Client({
 	host: config.elastic_host,
 	requestTimeout: 360000000 // some ridiculously large number to prevent timeout
 });
-var db = new neo4j.GraphDatabase(config.neo4j_url);
+var db = new neo4j.GraphDatabase(config.neo4j_url, config.auth);
 
 var batch_es = 1000, // number of documents per batch to be imported in bulk
 	batch_neo4j = 10000,
