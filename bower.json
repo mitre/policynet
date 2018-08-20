@@ -8,7 +8,7 @@
     "toastr": "~2.1.1",
     "animate.css": "~3.3.0",
     "angular": "~1.5.0",
-    "lodash": "^4.0.0",
+    "lodash": "^4.17.10",
     "linkurious.js": "linkurious/linkurious.js#~1.0.10",
     "d3": "~3.5.6",
     "d3pie": "benkeen/d3pie#~0.1.9",
