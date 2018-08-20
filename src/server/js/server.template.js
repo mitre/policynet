@@ -10,8 +10,7 @@ var express 		= require("express"),
 	io				= socket(server),
 	config			= require('./config.js'),
 	utils			= require('./utils.js'),
-	logic			= require('./query.logic.js'),
-	dashboard		= require('./dashboard.js');
+	logic			= require('./query.logic.js');
 
 global.emitter		= new events.EventEmitter().setMaxListeners(50);
 
