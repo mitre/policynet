@@ -1,6 +1,8 @@
 PolicyNet
 =========
 
+# [Demo](http://policynet.mitre.org/intro).
+
 ## Requirements
 
 * JDK 1.8 (`java-1.8.0-openjdk` & `java-1.8.0-openjdk-devel`) + maven
