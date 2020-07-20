@@ -19,7 +19,7 @@
     "helmet": "^2.1.1",
     "lodash": "~4.17.10",
     "moment": "^2.10.6",
-    "morgan": "~1.6.1",
+    "morgan": "~1.10.0",
     "neo4j": "^2.0.0-RC2",
     "neo4j-driver": "^1.0.2",
     "pretty-data": "^0.40.0",
