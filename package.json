@@ -40,7 +40,7 @@
     "build-test": "gulp build-test"
   },
   "devDependencies": {
-    "bower": "~1.4.1",
+    "bower": "~1.8.8",
     "browser-sync": "~2.7.12",
     "browser-sync-spa": "~1.0.2",
     "cheerio": "^0.20.0",
