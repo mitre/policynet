@@ -1,7 +1,7 @@
 PolicyNet
 =========
 
-# [Demo](http://policynet.mitre.org/intro).
+# [Demo](http://policynet.mitre.org/intro)
 
 ## Requirements
 
